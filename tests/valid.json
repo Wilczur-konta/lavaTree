@@ -1,8 +1,283 @@
 {
   "testCase1": {
-
+    "sideBar": {
+      "visibility": "Boolean"
+    },
+    "container": {
+      "companyList": {
+        "companies": [
+          {
+            "id": "Number",
+            "name": "String",
+            "address": "String",
+            "nip": "String"
+          }
+        ]
+      }
+    }
   },
   "testCase2": {
-
+    "sideBar": {
+      "visibility": "Boolean"
+    },
+    "container": {
+      "companyList": {
+        "companies": [
+          {
+            "id": "Number",
+            "name": "String",
+            "address": "String",
+            "nip": "String"
+          }
+        ]
+      }
+    },
+    "patients": [
+      {
+        "id": "Number",
+        "name": "String",
+        "address": "String",
+        "pesel": "String"
+      }
+    ]
+  },
+  "testCase3": {
+    "sideBar": {
+      "visibility": "Boolean"
+    },
+    "container": {
+      "companyList": {
+        "companies": [
+          {
+            "id": "Number",
+            "name": "String",
+            "address": "String",
+            "nip": "String"
+          }
+        ]
+      }
+    },
+    "patients": [
+      {
+        "id": "Number",
+        "name": "String",
+        "address": "String",
+        "pesel": "String"
+      }
+    ],
+    "authorization__v": {
+      "unauthorized": {
+        "email": "String",
+        "password": "String"
+      },
+      "consumer": {
+        "email": "String",
+        "token": "String",
+        "profile": {
+          "name": "String",
+          "surName": "String",
+          "phone": "String"
+        }
+      }
+    }
+  },
+  "testCase4": {
+    "sideBar": {
+      "visibility": "Boolean"
+    },
+    "container": {
+      "companyList": {
+        "companies": [
+          {
+            "id": "Number",
+            "name": "String",
+            "address": "String",
+            "nip": "String"
+          }
+        ]
+      }
+    },
+    "patients": [
+      {
+        "id": "Number",
+        "name": "String",
+        "address": "String",
+        "pesel": "String"
+      }
+    ],
+    "authorization__v": {
+      "unauthorized": {
+        "email": "String",
+        "password": "String"
+      },
+      "consumer": {
+        "email": "String",
+        "token": "String",
+        "profile": {
+          "name": "String",
+          "surName": "String",
+          "phone": "String"
+        }
+      }
+    }
+  },
+  "testCase5": {
+    "sideBar": {
+      "visibility": "Boolean"
+    },
+    "container": {
+      "companyList": {
+        "companies": [
+          {
+            "id": "Number",
+            "name": "String",
+            "address": "String",
+            "nip": "String"
+          }
+        ]
+      },
+      "patients": [
+        {
+          "id": "Number",
+          "name": "String",
+          "address": "String",
+          "pesel": "String"
+        }
+      ],
+      "exam": {
+        "idExam": "Number",
+        "patientId": "Number",
+        "organizationId": "Number"
+      }
+    },
+    "authorization__v": {
+      "unauthorized": {
+        "email": "String",
+        "password": "String"
+      },
+      "consumer": {
+        "email": "String",
+        "token": "String",
+        "profile": {
+          "name": "String",
+          "surName": "String",
+          "phone": "String"
+        }
+      }
+    }
+  },
+  "testCase6": {
+    "sideBar": {
+      "visibility": "Boolean"
+    },
+    "container": {
+      "companyList": {
+        "companies": [
+          {
+            "id": "Number",
+            "name": "String",
+            "address": "String",
+            "nip": "String"
+          }
+        ]
+      },
+      "patients": [
+        {
+          "id": "Number",
+          "name": "String",
+          "address": "String",
+          "pesel": "String"
+        }
+      ],
+      "exam": {
+        "idExam": "Number",
+        "patientId": "Number",
+        "organizationId": "Number",
+        "data__v": {
+          "closed": {
+            "closeDate": "String"
+          },
+          "open": {
+            "startDate": "String"
+          }
+        }
+      }
+    },
+    "authorization__v": {
+      "unauthorized": {
+        "email": "String",
+        "password": "String"
+      },
+      "consumer": {
+        "email": "String",
+        "token": "String",
+        "profile": {
+          "name": "String",
+          "surName": "String",
+          "phone": "String"
+        }
+      }
+    }
+  },
+  "testCase7": {
+    "sideBar": {
+      "visibility": "Boolean"
+    },
+    "container": {
+      "companyList": {
+        "companies": [
+          {
+            "id": "Number",
+            "name": "String",
+            "address": "String",
+            "nip": "String"
+          }
+        ]
+      },
+      "patients": [
+        {
+          "id": "Number",
+          "name": "String",
+          "address": "String",
+          "pesel": "String"
+        }
+      ],
+      "exam": {
+        "idExam": "Number",
+        "patientId": "Number",
+        "organizationId": "Number",
+        "data__v": {
+          "closed": {
+            "closeDate": "String",
+            "opinion__v": {
+              "positive": {
+                "testCase": "Number"
+              },
+              "negative": {
+                "testCase": "Boolean"
+              }
+            }
+          },
+          "open": {
+            "startDate": "String"
+          }
+        }
+      }
+    },
+    "authorization__v": {
+      "unauthorized": {
+        "email": "String",
+        "password": "String"
+      },
+      "consumer": {
+        "email": "String",
+        "token": "String",
+        "profile": {
+          "name": "String",
+          "surName": "String",
+          "phone": "String"
+        }
+      }
+    }
   }
 }
