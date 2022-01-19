@@ -275,7 +275,8 @@
         "profile": {
           "name": "String",
           "surName": "String",
-          "phone": "String"
+          "phone": "String",
+          "bankAccount": "String"
         }
       }
     }
