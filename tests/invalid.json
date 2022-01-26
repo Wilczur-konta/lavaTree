@@ -292,7 +292,25 @@
     "h": "Boolean",
     "i": ["String","Number"],
     "j": ["Boolean"],
-    "k": {"name": []}
+    "k": {"name": []},
+    "dane__v": "string",
+    "info__v": {    },
+    "kontakt__v": {
+      "kom": "Number",
+      "gg": "Number"
+    },
+    "inne__v": {
+      "fb": "String"
+    },
+    "details": {
+      "dane_os": {"age": "Number"},
+      "dane_szczeg": {
+        "wzrost": "Number",
+        "wyglad__v": {
+          "kolor_oczu": "String"
+                  }
+      }
+    }
   }
 
   }

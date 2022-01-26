@@ -6,4 +6,4 @@ function proxiedLog(...args) {
     log.call(console, `${line}\n`, ...args);
 }
 console.info = proxiedLog;
-console.log = proxiedLog;
+console.log = proxiedLog

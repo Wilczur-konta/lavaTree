@@ -7,7 +7,9 @@ let resultOK =[]                    // Array z poprawnymi danymi
 let resultIncorrectString=[]        // Array z niepoprawnymi stringami
 let resultObj = []
 let resultEmptyObject = []          // Array z pustymi obiektami
-let resultOfArrays = []             // Niepoprwne arrays
+let resultOfArrays = []             // Niepoprawne arrays
+let resultOfIncorrectVersion = []   // Array z danymi z niepoprawnych elementów wersjonowanych __v
+
 
 function checkSchema(obj) {
 
@@ -16,7 +18,7 @@ function checkSchema(obj) {
        let value = obj[key]
 
       // jeżeli value jest "String" / "Number" / "Boolean" to dane są poprawne"
-      if (value==="String"||value==="Number"||value==="Boolean" ){
+      if (value==="String"||value==="Number"||value==="Boolean"){
          resultOK.push("Dane poprawne  " + key + " : " + value)
       }
       // jeżeli wartością jest pusty obiekt
@@ -25,7 +27,7 @@ function checkSchema(obj) {
          resultEmptyObject.push("Pusty obiekt " +key + ":" + value)
       }
       //jeżeli wartością jest obiekt to rekursja
-      else if (typeof value === 'object' && !Array.isArray(value)) {
+      else if (typeof value === 'object' && !Array.isArray(value) && key.includes("__v")===false) {
          checkSchema(value)
       }
       // jeżeli niepoprawny string
@@ -34,7 +36,8 @@ function checkSchema(obj) {
           !Array.isArray(value) &&
           value!=="String" &&
           value!=="Number" &&
-          value!=="Boolean"
+          value!=="Boolean" &&
+          key.includes("__v")===false
       ){
          resultIncorrectString.push("Niepoprawny string  " + key + ":" + value)
       }
@@ -53,12 +56,18 @@ function checkSchema(obj) {
                console.log(element)
                checkSchema(value)
             }
-
          })
-
-      } // jeżeli w array jest więcej niż jeden obiekt
+      } // jeżeli w array jest inna liczba elementów niż jeden
       else if(Array.isArray(value)===true && Object.keys(value).length!==1){
          resultOfArrays.push("Niepoprawny array  " + key + ":" + value)
+      }
+      // jeżeli nazwa klucza zakończona na __v && valu !== 'object'  to błąd
+      else if(key.indexOf("__v")  && typeof value !== 'object' ){
+         resultOfIncorrectVersion.push("Klucz jest wersją, value jest niepoprawna  " + key + ":" + value)
+      }  // jeżeli nazwa klucza zakończona na __v && valu === 'object' i jest mniej niż jeden element
+      else if(key.indexOf("__v")  && typeof value === 'object' && Object.keys(value).length<2 ){
+           console.log("Niepoprawna value wersjonowanego klucza  " + key + ":" + value)
+         resultOfIncorrectVersion.push("Klucz jest wersją, value jest niepoprawna  " + key + ":" + value)
       }
    }
    return resultObj;
@@ -72,8 +81,9 @@ console.log(resultOK)
 console.log(resultIncorrectString)
 console.log(resultEmptyObject)
 console.log(resultOfArrays)
+console.log(resultOfIncorrectVersion)
 
 
-// dopisać sprwadzenie jeżeli __v && valu !== 'object'  to wyrzucaj błąd
+
 // dopisać sprawdzanie czy na tym samym poziomie nie powtarza się nazwa klucza
 
