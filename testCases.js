@@ -42,9 +42,8 @@ function checkSchema(obj) {
          resultIncorrectString.push("Niepoprawny string  " + key + ":" + value)
       }
       //jeżeli array []
-      else if(Array.isArray(value)===true && Object.keys(value).length===1 ){
-         console.log(Object.keys(value).length )
-         console.log(value)
+      else if(Array.isArray(value)===true && Object.keys(value).length===1){
+
 
          value.forEach((element)=>{
             // jeżeli w array jest obiekt to rekursja
@@ -52,7 +51,7 @@ function checkSchema(obj) {
                checkSchema(value)
             } // jeżeli w array jest string to rekursja
             else if(typeof element==='string'){
-               console.log("element strng")
+               console.log("element string")
                console.log(element)
                checkSchema(value)
             }
@@ -64,7 +63,8 @@ function checkSchema(obj) {
       // jeżeli nazwa klucza zakończona na __v && valu !== 'object'  to błąd
       else if(key.indexOf("__v")  && typeof value !== 'object' ){
          resultOfIncorrectVersion.push("Klucz jest wersją, value jest niepoprawna  " + key + ":" + value)
-      }  // jeżeli nazwa klucza zakończona na __v && valu === 'object' i jest mniej niż jeden element
+      }
+      // jeżeli nazwa klucza zakończona na __v && value === 'object' i jest mniej niż jeden element
       else if(key.indexOf("__v")  && typeof value === 'object' && Object.keys(value).length<2 ){
            console.log("Niepoprawna value wersjonowanego klucza  " + key + ":" + value)
          resultOfIncorrectVersion.push("Klucz jest wersją, value jest niepoprawna  " + key + ":" + value)
@@ -87,3 +87,6 @@ console.log(resultOfIncorrectVersion)
 
 // dopisać sprawdzanie czy na tym samym poziomie nie powtarza się nazwa klucza
 
+// wszystko w jedna funkcję - jedna główna funkcja kßóra nie jst reskurencyjna,
+// duzo malych przykładów niepoprawnych testcasów,
+//

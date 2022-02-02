@@ -1,0 +1,71 @@
+{
+  "testCase1": {
+    "ubranie__v": {
+      "sportowe": "String",
+      "eleganckie": "String"
+    },
+    "buty__v": {
+      "eleganckie": "String"
+    },
+    "cechy": ["String"],
+    "wyglad": ["String"],
+    "pusty": {
+      "dane": "String",
+      "dane1": "String",
+      "dane2": "String"
+    },
+    "imię": "String",
+    "klucz": "String",
+    "info": "String",
+    "info2": "String",
+    "age": "Number",
+    "age2": "Number",
+    "isFemale": "Boolean",
+    "isMale": "Boolean",
+    "isFemale2": "Boolean",
+    "isMale2": "Boolean",
+    "sideBar": {
+      "visibility": "Boolean"
+    },
+    "container": {
+      "companyList": {
+        "companies": [
+          {
+            "id": "Number",
+            "name": "String",
+            "address": "String",
+            "nip": "String",
+            "inne": {
+              "name": "String"
+            }
+
+          }
+        ]
+      }
+    }
+  },
+  "testCase2": {
+    "sideBar": {
+      "visibility": "Boolean"
+    },
+    "container": {
+      "companyList": {
+        "companies": [
+          {
+            "id": "Number",
+            "name": "String",
+            "address": "String",
+            "nip": "String"
+          }
+        ]
+      }
+    }
+  },
+  "testCase3": {
+    "dane__v": {
+      "telefon": "Boolean",
+      "email": "String",
+      "inne": "Number"
+    }
+  }
+}
