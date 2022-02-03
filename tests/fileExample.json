@@ -1,42 +1,41 @@
 {
-    "testCase1": {
-        "ubranie__v": {
-            "sportowe": "dres",
-            "eleganckie": "garnitur"
-        },
-        "buty__v": {
-            "eleganckie": "laczki"
-        },
-        "cechy": ["kolor oczu", 34],
-        "wyglad": ["wzrost"],
-        "pusty": {},
-        "imię": "to moje imię",
-        "lllll":"ppppp",
-        "hhhhhhh": "uhjhjhjhkhjkjh",
-        "zzzzzzzz": "dfrtg",
-        "mmmmm": "Asiula",
-        "info": "informacje o user",
-        "info2": 245,
-        "age": 18,
-        "age2": "26",
-        "isFemale": "tak",
-        "isMale": 0,
-        "isFemale2": true,
-        "isMale2": "false1",
-        "sideBar": {
-            "visibility": true
-        },
-        "container": {
-            "companyList": {
-                "companies": [
-                    {
-                        "id": 12,
-                        "name": "Asiula",
-                        "address": "Brand",
-                        "nip": "123-123-123",
-                        "inne": {}
-                    }
-                ]
+    "1":{
+        "testCase1": {
+            "ubranie_sportowe":"dres",
+            "buty__v": {
+                "eleganckie": "laczki"
+            },
+            "cechy": ["kolor oczu", 34],
+            "wyglad": ["wzrost"],
+            "pusty": {},
+            "imię": "to moje imię",
+            "lllll":"ppppp",
+            "hhhhhhh": "uhjhjhjhkhjkjh",
+            "zzzzzzzz": "dfrtg",
+            "mmmmm": "Asiula",
+            "info": "informacje o user",
+            "info2": 245,
+            "age": 18,
+            "age2": "26",
+            "isFemale": "tak",
+            "isMale": 0,
+            "isFemale2": true,
+            "isMale2": "false1",
+            "sideBar": {
+                "visibility": true
+            },
+            "container": {
+                "companyList": {
+                    "companies": [
+                        {
+                            "id": 12,
+                            "name": "Asiula",
+                            "address": "Brand",
+                            "nip": "123-123-123",
+                            "inne": {}
+                        }
+                    ]
+                }
             }
         }
     },
@@ -59,11 +58,7 @@
         }
     },
     "testCase3": {
-        "dane__v": {
-            "telefon": false,
-            "email": "q@pl",
-            "inne": 34
-        }
+        "dane_telefon": false
     }
 }
 

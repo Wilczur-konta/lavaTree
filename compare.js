@@ -16,6 +16,8 @@ let resultCompareKeys = ["Różnica kluczy schema/file:  "]
 let resultArray = ["Błędny array:  "]
 let resultV = ["Błąd w wersjonowaniu:  "]
 
+let elementyRozlaczneSchemat = []
+
 
 
 let compare = (schema, file)=> {
@@ -24,6 +26,9 @@ let compare = (schema, file)=> {
 
         let valueSchema= schema[key]
         let valueFile= file[key]
+
+        console.log(valueSchema)
+        console.log(valueFile)
 
         let keyOfSchema = Object.keys(schema)
         let keyOfFile = Object.keys(file)
@@ -48,16 +53,25 @@ let compare = (schema, file)=> {
             resultEmptyObject.push(key + ": " + valueSchema + " : "+ valueFile)
         }
 //rekursja
-        else if (typeof valueSchema === 'object' && typeof valueFile=== 'object' && !Array.isArray(valueSchema) && !Array.isArray(valueFile)&& key.includes("__v")===false &&Object.keys(valueSchema).length===Object.keys(valueFile).length) {
+        else if (typeof valueSchema === 'object' && typeof valueFile=== 'object' && Array.isArray(valueSchema)===false && Array.isArray(valueFile)===false && !key.includes("__v") && Object.keys(valueSchema).length===Object.keys(valueFile).length) {
 
-            compare(valueSchema,valueFile)
+          compare(valueSchema,valueFile)
         }
+ // jeżeli array i w nim obiekt
 //jezeli array
-        else if(Array.isArray(valueFile)===true && Object.keys(valueFile).length===1 ){
+        else if(Array.isArray(valueSchema)===true && Array.isArray(valueFile)===true && Object.keys(valueFile).length===1 ){
+
+            console.log(Object.keys(valueFile))
+
+            console.log(valueSchema)
+            console.log(valueFile)
+
             valueFile.forEach((element)=>{
+                console.log(element)
 
                 // jeżeli w array jest obiekt
                 if(typeof element==='object'){
+                    console.log(element)
                     compare(valueSchema,valueFile)
                 } // jeżeli w array jest string
                 else if(typeof element==='string'){
@@ -66,7 +80,9 @@ let compare = (schema, file)=> {
             })
         }
 // jeżeli w array jest inna liczba elementów niż jeden
-        else if(Array.isArray(valueFile)===true && Object.keys(valueFile).length!==1){
+        else if(Array.isArray(valueSchema)===true && Array.isArray(valueFile)===true && Object.keys(valueFile).length!==1){
+            console.log(valueSchema)
+            console.log(valueFile)
             resultArray.push(key + ":" + valueFile)
         }
 // jeżeli nazwa klucza zakończona na __v && valu !== 'object'  to błąd
@@ -88,8 +104,65 @@ let compare = (schema, file)=> {
 //jezeli ilośc kluczy nie jest taka sama (niewersjonowane)
         else if (typeof valueSchema === 'object' && typeof valueFile=== 'object'&& Object.keys(valueSchema).length!==Object.keys(valueFile).length && !key.includes("__v")){
 
+            console.log("nie jest dobrze")
+
             let differenceSchemaFile = Object.keys(valueSchema).filter(x=>!Object.keys(valueFile).includes(x));
             let differenceFileSchema = Object.keys(valueFile).filter(x=>!Object.keys(valueSchema).includes(x));
+
+
+//TU WIP NAD TYM FRAGMENTEM , W KTÓRYM BĘDĄ SIE PORÓWNYWAŁY NOWO STWORZONE KLUCZE Z PLIKU JSONA
+            //PORÓWNYWANIE POCZATKU NAZWY NOWEGO KLUCZA Z NAZWĄ KLUCZA WERSJONOWANEGO W SCHEMACIE,
+            // POTEM PORÓWNANIE JEGO DRUIEJ CZESCI Z KLUCZAMI KTÓRE DOSTĘPNE SĄ W OBIEKCIE WERSJONOWANYM I ZLICZENIE ODPOWIEDNIO
+            // KLUCZY ZWYKŁYCH I WERSJONOWANYCH ŻEBY SPRAWDZAĆ CZY SĄ RÓZNIECE W ILOŚCI KLUCZY
+
+
+                console.log(differenceSchemaFile)
+
+                differenceSchemaFile.forEach((element)=>{
+                    console.log("*")
+                    console.log(element)
+                    console.log("#")
+
+                    if(element.includes("__v")){
+                        console.log("zawiera __v  " + element)
+
+                        let dopasowanyKlucz = differenceFileSchema.filter(el=>el.includes("_"))
+                        console.log("to jest dopasowany klucz:  "+dopasowanyKlucz)
+
+                        for (let allkeys in schema){
+                            console.log("hehehhehehehhe")
+                            console.log("wyszukane   "+allkeys)
+                            let val = schema[allkeys]
+                            console.log("wyszukana val  "+val)
+                            if(schema.hasOwnProperty(dopasowanyKlucz)){
+                                console.log("to jest tu:  "+schema[allkeys])
+                            } else {
+                            }
+                        }
+
+
+
+
+                            // let valueSchema= schema[key]
+                            // let valueFile= file[key]
+                            //
+                            // console.log(valueSchema)
+                            // console.log(valueFile)
+
+
+
+
+
+                    } else {
+                        elementyRozlaczneSchemat.push(element)
+                    }
+                })
+
+
+
+
+
+
 
             resultCompareKeys.push(`
             Ilość kluczy w schemacie ${Object.keys(valueSchema).length},
@@ -99,7 +172,7 @@ let compare = (schema, file)=> {
             plik: ${differenceFileSchema}  `)
         }
 //jezeli ilośc kluczy nie jest taka sama (wersjonowane)
-        else if (typeof valueSchema === 'object' && typeof valueFile=== 'object'&& Object.keys(valueSchema).length!==Object.keys(valueFile).length && key.includes("__v")){
+        else if (Object.keys(valueSchema).length!==Object.keys(valueFile).length){
 
             console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
@@ -108,7 +181,7 @@ let compare = (schema, file)=> {
     return result
 }
 
-console.log(compare(testSchema.testCase3,testFile.testCase3))
+console.log(compare(testSchema["1"],testFile["1"]))
 
 
 console.log(resultString)
@@ -122,3 +195,5 @@ console.log(resultInCorrBoolean)
 console.log(resultEmptyObject)
 console.log(resultCompareKeys)
 console.log(resultV)
+
+console.log(elementyRozlaczneSchemat)

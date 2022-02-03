@@ -1,4 +1,5 @@
 {
+"1":{
   "testCase1": {
     "ubranie__v": {
       "sportowe": "String",
@@ -7,8 +8,12 @@
     "buty__v": {
       "eleganckie": "String"
     },
-    "cechy": ["String"],
-    "wyglad": ["String"],
+    "cechy": [
+      "String"
+    ],
+    "wyglad": [
+      "String"
+    ],
     "pusty": {
       "dane": "String",
       "dane1": "String",
@@ -38,12 +43,12 @@
             "inne": {
               "name": "String"
             }
-
           }
         ]
       }
     }
-  },
+  }
+},
   "testCase2": {
     "sideBar": {
       "visibility": "Boolean"
