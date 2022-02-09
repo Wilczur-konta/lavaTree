@@ -1,199 +1,138 @@
 let linesModule = require('./line_of_code')
 
-let testSchema = require("./tests/schemaExample.json")
 let testFile = require("./tests/fileExample.json");
+let testSchema = require("./tests/schemaExample.json")
 
-let resultString = ["Poprawne dane String key/schema/file:  "]
-let resultNumber = ["Poprawne dane Number key/schema/file:  "]
-let resultBoolean = ["Poprawne dane Boolean key/schema/file:  "]
-let result = []
+let stringOk = ["poprawne stringi", []]
+let emptyObjects = ["empty object", []]
 
-let resultInCorrString = ["Błędne dane String key/schema/file:  "]
-let resultInCorrNumber = ["Błędne dane Number key/schema/file:  "]
-let resultInCorrBoolean = ["Błędne dane Boolean key/schema/file:  "]
-let resultEmptyObject = ["Błędne dane pusty obiekt key/schema/file:  "]
-let resultCompareKeys = ["Różnica kluczy schema/file:  "]
-let resultArray = ["Błędny array:  "]
-let resultV = ["Błąd w wersjonowaniu:  "]
-
-let elementyRozlaczneSchemat = []
+let keyInFileZwykle = ["Klucze zwykłe"]
+let keyInFileWersjonowane = ["Klucze wersjonowane"]
 
 
+let compare = (file, schema) => {
+    console.log(file)
+    console.log(schema)
 
-let compare = (schema, file)=> {
-
-    for (let key in schema) {
-
-        let valueSchema= schema[key]
-        let valueFile= file[key]
-
-        console.log(valueSchema)
-        console.log(valueFile)
-
-        let keyOfSchema = Object.keys(schema)
-        let keyOfFile = Object.keys(file)
-//primitives
-        if(valueSchema==="String" && typeof valueFile==='string' ){
-            //console.log(valueFile)
-            //console.log(valueSchema)
-            resultString.push(key + ": " + valueSchema + " : "+ valueFile)
-        }else if(valueSchema==="String" && typeof valueFile!=='string'){
-            resultInCorrString.push(key + ": " + valueSchema + " : "+ valueFile)
-        }else if (valueSchema==="Number" && typeof valueFile==='number'){
-            resultNumber.push(key + ": " + valueSchema + " : "+ valueFile)
-        }else if(valueSchema==="Number" && typeof valueFile!=='number'){
-            resultInCorrNumber.push(key + ": " + valueSchema + " : "+ valueFile)
-        }else if(valueSchema==="Boolean" && typeof valueFile==='boolean'){
-            resultBoolean.push(key + ": " + valueSchema + " : "+ valueFile)
-        }else if(valueSchema==="Boolean" && typeof valueFile!=='boolean'){
-            resultInCorrBoolean.push(key + ": " + valueSchema + " : "+ valueFile)
-// objects
-//jeżeli pusty obiekt
-        }else if(Object.keys(valueFile).length===0 && Array.isArray(valueSchema)===false){
-            resultEmptyObject.push(key + ": " + valueSchema + " : "+ valueFile)
+    // jeśli jest atomic  - tu dopisać jeszcze number i boolean
+    if (typeof file !== 'object') {
+        if (typeof file === "string" && schema === "String") {
+            stringOk[1].push(file + ":" + schema)
         }
-//rekursja
-        else if (typeof valueSchema === 'object' && typeof valueFile=== 'object' && Array.isArray(valueSchema)===false && Array.isArray(valueFile)===false && !key.includes("__v") && Object.keys(valueSchema).length===Object.keys(valueFile).length) {
+    } // jeśli jest obiektem, nie jest arrayem i nie jest pustym obiektem
+    else if (typeof file === 'object' && typeof schema === 'object' && !Array.isArray(file) && !Array.isArray(schema) && Object.keys(file).length !== 0 && Object.keys(schema).length !== 0) {
+        console.log("pliki sa obiektem")
+        console.log("__________________________________________________")
+        //console.log(file)
+        //console.log(schema)
 
-          compare(valueSchema,valueFile)
-        }
- // jeżeli array i w nim obiekt
-//jezeli array
-        else if(Array.isArray(valueSchema)===true && Array.isArray(valueFile)===true && Object.keys(valueFile).length===1 ){
+        for (let keyInFile in file) {
+            console.log("key in File  " + keyInFile)
 
-            console.log(Object.keys(valueFile))
+            let valueOfKeyInFile = file[keyInFile]
+            console.log(valueOfKeyInFile)
 
-            console.log(valueSchema)
-            console.log(valueFile)
+            if (!keyInFile.includes("_")) {
 
-            valueFile.forEach((element)=>{
-                console.log(element)
+                console.log("------ BEZ --------")
+                console.log(keyInFile)
 
-                // jeżeli w array jest obiekt
-                if(typeof element==='object'){
-                    console.log(element)
-                    compare(valueSchema,valueFile)
-                } // jeżeli w array jest string
-                else if(typeof element==='string'){
-                    compare(valueSchema,valueFile)
+                let deepSearch = (obj, searchedKey) => {
+
+                    console.log(Object.keys(obj))
+                    if (Object.keys(obj).includes(searchedKey)) {  //if "klucze schematu" zawieraja szukany "klucz z pliku"
+
+                        let valueOfKeyInSchema = obj[searchedKey]
+                        console.log(valueOfKeyInSchema)                         // wartość znalezionego klucza ze schematu
+
+                        console.log("****************")
+                        compare(valueOfKeyInFile, valueOfKeyInSchema)           // wartosc klucza z pliku / wartosc klucza schematu
+                    }
                 }
-            })
-        }
-// jeżeli w array jest inna liczba elementów niż jeden
-        else if(Array.isArray(valueSchema)===true && Array.isArray(valueFile)===true && Object.keys(valueFile).length!==1){
-            console.log(valueSchema)
-            console.log(valueFile)
-            resultArray.push(key + ":" + valueFile)
-        }
-// jeżeli nazwa klucza zakończona na __v && valu !== 'object'  to błąd
-        else if(key.includes("__v")  && typeof valueFile !== 'object' ){
-            resultV.push( key + ":" + valueFile)
-        }
-// jeżeli nazwa klucza zakończona na __v && valu === 'object' i jest mniej niż jeden element
-        else if(key.includes("__v")  && typeof valueFile === 'object' && Object.keys(valueFile).length<2 ){
-            resultV.push(key + ":" + valueFile)
-        }
-// jeżeli nazwa klucza zakończona na __v && valu === 'object'
-        else if (typeof valueSchema === 'object' && typeof valueFile=== 'object' && !Array.isArray(valueSchema) && !Array.isArray(valueFile)&& key.includes("__v")===true &&Object.keys(valueSchema).length===Object.keys(valueFile).length) {
-            console.log("jest dobrze")
-            compare(valueSchema, valueFile)
-        }
+                deepSearch(schema, keyInFile,)
 
+            } else if (keyInFile.includes("_")) {
 
+                console.log("------ Z --------")
+                console.log("key in File  " + keyInFile)
+                let prefix = (keyInFile.substring(0, keyInFile.indexOf("_"))) + "__v"
+                let sufix = (keyInFile.substring(keyInFile.lastIndexOf("_")).replace("_", ""))
+                console.log(prefix)
+                console.log(sufix)
 
-//jezeli ilośc kluczy nie jest taka sama (niewersjonowane)
-        else if (typeof valueSchema === 'object' && typeof valueFile=== 'object'&& Object.keys(valueSchema).length!==Object.keys(valueFile).length && !key.includes("__v")){
+                let deepSearchII = (obj, searchedKey) => {
 
-            console.log("nie jest dobrze")
+                    console.log(Object.keys(obj))                  // klucze w schemacie
+                    if (Object.keys(obj).includes(searchedKey)) {  //if "klucze schematu" zawieraja szukany "klucz z pliku"
 
-            let differenceSchemaFile = Object.keys(valueSchema).filter(x=>!Object.keys(valueFile).includes(x));
-            let differenceFileSchema = Object.keys(valueFile).filter(x=>!Object.keys(valueSchema).includes(x));
+                        let valueOfKeyInSchema = obj[searchedKey] // wartość znalezionego klucza w schemacie
+                        console.log(valueOfKeyInSchema)  //tu brać teraz drugi człon - osobowe      //   wartość znalezionego klucza ze schematu
+                        // wyznaczyc sufix !!! osobowe i dalej szukać
+                        // za wczesnie teraz jest compare
 
+                        //
+                        let deepSearch = (obj, searchedKey) => {
 
-//TU WIP NAD TYM FRAGMENTEM , W KTÓRYM BĘDĄ SIE PORÓWNYWAŁY NOWO STWORZONE KLUCZE Z PLIKU JSONA
-            //PORÓWNYWANIE POCZATKU NAZWY NOWEGO KLUCZA Z NAZWĄ KLUCZA WERSJONOWANEGO W SCHEMACIE,
-            // POTEM PORÓWNANIE JEGO DRUIEJ CZESCI Z KLUCZAMI KTÓRE DOSTĘPNE SĄ W OBIEKCIE WERSJONOWANYM I ZLICZENIE ODPOWIEDNIO
-            // KLUCZY ZWYKŁYCH I WERSJONOWANYCH ŻEBY SPRAWDZAĆ CZY SĄ RÓZNIECE W ILOŚCI KLUCZY
+                            console.log(Object.keys(obj))
+                            if (Object.keys(obj).includes(searchedKey)) {  //if "klucze schematu" zawieraja szukany "klucz z pliku"
 
+                                let valueOfKeyInSchema = obj[searchedKey]
+                                console.log(valueOfKeyInSchema)                         // wartość znalezionego klucza ze schematu
 
-                console.log(differenceSchemaFile)
-
-                differenceSchemaFile.forEach((element)=>{
-                    console.log("*")
-                    console.log(element)
-                    console.log("#")
-
-                    if(element.includes("__v")){
-                        console.log("zawiera __v  " + element)
-
-                        let dopasowanyKlucz = differenceFileSchema.filter(el=>el.includes("_"))
-                        console.log("to jest dopasowany klucz:  "+dopasowanyKlucz)
-
-                        for (let allkeys in schema){
-                            console.log("hehehhehehehhe")
-                            console.log("wyszukane   "+allkeys)
-                            let val = schema[allkeys]
-                            console.log("wyszukana val  "+val)
-                            if(schema.hasOwnProperty(dopasowanyKlucz)){
-                                console.log("to jest tu:  "+schema[allkeys])
-                            } else {
+                                console.log("****************")
+                                compare(valueOfKeyInFile, valueOfKeyInSchema)           // wartosc klucza z pliku / wartosc klucza schematu
                             }
                         }
+                        deepSearch(valueOfKeyInSchema, sufix)
+                        //
 
-
-
-
-                            // let valueSchema= schema[key]
-                            // let valueFile= file[key]
-                            //
-                            // console.log(valueSchema)
-                            // console.log(valueFile)
-
-
-
-
-
-                    } else {
-                        elementyRozlaczneSchemat.push(element)
+                        console.log("****************")
+                        //compare(valueOfKeyInFile,valueOfKeyInSchema)           // wartosc klucza z pliku / wartosc klucza schematu
                     }
-                })
+                }
+
+                deepSearchII(schema, prefix)
 
 
+            }
 
+            if (!keyInFile.includes("_")) {
+                keyInFileZwykle.push(keyInFile)
+            } else if (keyInFile.includes("_")) {
+                keyInFileWersjonowane.push(keyInFile)
+            }
 
-
-
-
-            resultCompareKeys.push(`
-            Ilość kluczy w schemacie ${Object.keys(valueSchema).length},
-            Ilość kluczy w pliku ${Object.keys(valueFile).length}
-            rozbieżności:
-            schemat: ${differenceSchemaFile}, 
-            plik: ${differenceFileSchema}  `)
-        }
-//jezeli ilośc kluczy nie jest taka sama (wersjonowane)
-        else if (Object.keys(valueSchema).length!==Object.keys(valueFile).length){
-
-            console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
         }
+    } // jeśli jest obiektem, nie jest arrayem i nie jest pustym obiektem
+    else if (typeof file === 'object' && typeof schema === 'object' && Object.keys(file).length === 0 && Object.keys(schema).length === 0) {
+        emptyObjects[1].push(file + ":" + schema)
+    } //jest arrayem i nie jest pustym obiektem
+    else if(Array.isArray(file) && Array.isArray(schema) && file.length===0 && schema.length===0){
+        emptyObjects[1].push(file + ":" + schema)
+
     }
-    return result
+    //jeśli jest arrayem
+    else if (Array.isArray(file) && Array.isArray(schema)) {
+        console.log("obiekt jest arrayem")
+        compare(file[0],schema[0])
+    }
 }
 
-console.log(compare(testSchema["1"],testFile["1"]))
+compare(testFile, testSchema)
+
+console.log("-----------------------------WYNIKI-----------------------------")
+console.log()
+console.log(stringOk)
+console.log(emptyObjects)
+
+console.log("----------------------------DODATKOWE----------------------------")
+console.log()
+console.log(keyInFileZwykle)
+console.log(keyInFileWersjonowane)
 
 
-console.log(resultString)
-console.log(resultNumber)
-console.log(resultBoolean)
-console.log(resultArray)
-
-console.log(resultInCorrString)
-console.log(resultInCorrNumber)
-console.log(resultInCorrBoolean)
-console.log(resultEmptyObject)
-console.log(resultCompareKeys)
-console.log(resultV)
-
-console.log(elementyRozlaczneSchemat)
+// zatrzymywanie programu w kolejnych elsach
+// 4 tablice porównujące klucze i zaliczające
+// jeżeli jest arrayem i w arrayu jest atomic obiekt
+//jeżeli w ogóle nic nie będzie w pliku - pierwszy warunek przed atomikiem ?

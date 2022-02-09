@@ -1,64 +1,13 @@
-{
-    "1":{
-        "testCase1": {
-            "ubranie_sportowe":"dres",
-            "buty__v": {
-                "eleganckie": "laczki"
-            },
-            "cechy": ["kolor oczu", 34],
-            "wyglad": ["wzrost"],
-            "pusty": {},
-            "imię": "to moje imię",
-            "lllll":"ppppp",
-            "hhhhhhh": "uhjhjhjhkhjkjh",
-            "zzzzzzzz": "dfrtg",
-            "mmmmm": "Asiula",
-            "info": "informacje o user",
-            "info2": 245,
-            "age": 18,
-            "age2": "26",
-            "isFemale": "tak",
-            "isMale": 0,
-            "isFemale2": true,
-            "isMale2": "false1",
-            "sideBar": {
-                "visibility": true
-            },
-            "container": {
-                "companyList": {
-                    "companies": [
-                        {
-                            "id": 12,
-                            "name": "Asiula",
-                            "address": "Brand",
-                            "nip": "123-123-123",
-                            "inne": {}
-                        }
-                    ]
-                }
-            }
-        }
+{ "emptyArr": [],
+    "hello": ["Joanna"],
+    "info":"informacje o userze",
+    "kluczEmptyObj": {},
+    "dane_osobowe": {
+        "imie": "Asiula",
+        "adres": "Brand"
     },
-    "testCase2": {
-        "sideBar": {
-            "visibility": false
-        },
-        "container": {
-            "companyList": {
-                "companies": [
-                    {
-                        "id": 23,
-                        "name": "Asiula",
-                        "address": "Brand",
-                        "nip": "123-123-123",
-                        "regon": "123-000-123"
-                    }
-                ]
-            }
-        }
-    },
-    "testCase3": {
-        "dane_telefon": false
+    "dane_kontaktowe": {
+        "telefon": "123-456-789",
+        "inne_email": "email@e.pl"
     }
 }
-
