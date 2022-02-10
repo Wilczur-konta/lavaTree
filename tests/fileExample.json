@@ -1,6 +1,6 @@
-{ "emptyArr": [],
+{ "emptyArr": [{}],
     "hello": ["Joanna"],
-    "info":"informacje o userze",
+    "info":"informacje",
     "kluczEmptyObj": {},
     "dane_osobowe": {
         "imie": "Asiula",

@@ -1,4 +1,4 @@
-{ "emptyArr": [],
+{ "emptyArr": [{}],
   "hello": ["String"],
   "info":"String",
   "kluczEmptyObj": {},

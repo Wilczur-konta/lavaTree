@@ -3,22 +3,32 @@ let linesModule = require('./line_of_code')
 let testFile = require("./tests/fileExample.json");
 let testSchema = require("./tests/schemaExample.json")
 
-let stringOk = ["poprawne stringi", []]
+let stringOk = ["poprawne string", []]
+let numberOk = ["poprawne number", []]
+let booleanOk = ["poprawne boolean", []]
+
 let emptyObjects = ["empty object", []]
 
 let keyInFileZwykle = ["Klucze zwykłe"]
 let keyInFileWersjonowane = ["Klucze wersjonowane"]
 
+let keyOfError = []
 
-let compare = (file, schema) => {
+let compare = (file, schema, param) => {
+    console.log(param)
     console.log(file)
     console.log(schema)
+    console.log(keyOfError)
 
-    // jeśli jest atomic  - tu dopisać jeszcze number i boolean
-    if (typeof file !== 'object') {
+    // if atomic
+    if (typeof file !== 'object' && !Array.isArray(file) && !Array.isArray(schema)) {
         if (typeof file === "string" && schema === "String") {
             stringOk[1].push(file + ":" + schema)
-        }
+        }else if(typeof file === "number" && schema === "Number"){
+            numberOk[1].push(file + ":" + schema)
+        }else if(typeof file === "boolean" && schema === "Boolean"){
+            booleanOk[1].push(file + ":" + schema)
+        } else {throw `Error -In schema {key:${param} value:"${schema}"}, in json type of value: ${typeof file} {key:${param} value:${file}}`}
     } // jeśli jest obiektem, nie jest arrayem i nie jest pustym obiektem
     else if (typeof file === 'object' && typeof schema === 'object' && !Array.isArray(file) && !Array.isArray(schema) && Object.keys(file).length !== 0 && Object.keys(schema).length !== 0) {
         console.log("pliki sa obiektem")
@@ -46,7 +56,9 @@ let compare = (file, schema) => {
                         console.log(valueOfKeyInSchema)                         // wartość znalezionego klucza ze schematu
 
                         console.log("****************")
-                        compare(valueOfKeyInFile, valueOfKeyInSchema)           // wartosc klucza z pliku / wartosc klucza schematu
+                        //keyOfError.push(keyInFile)
+
+                        compare(valueOfKeyInFile, valueOfKeyInSchema,keyInFile)           // wartosc klucza z pliku / wartosc klucza schematu
                     }
                 }
                 deepSearch(schema, keyInFile,)
@@ -80,7 +92,7 @@ let compare = (file, schema) => {
                                 console.log(valueOfKeyInSchema)                         // wartość znalezionego klucza ze schematu
 
                                 console.log("****************")
-                                compare(valueOfKeyInFile, valueOfKeyInSchema)           // wartosc klucza z pliku / wartosc klucza schematu
+                                compare(valueOfKeyInFile, valueOfKeyInSchema, param)           // wartosc klucza z pliku / wartosc klucza schematu
                             }
                         }
                         deepSearch(valueOfKeyInSchema, sufix)
@@ -114,12 +126,53 @@ let compare = (file, schema) => {
     }
     //jeśli jest arrayem
     else if (Array.isArray(file) && Array.isArray(schema)) {
+        console.log(param)
         console.log("obiekt jest arrayem")
-        compare(file[0],schema[0])
+        console.log(file)
+        console.log(file.length)
+        console.log(schema)
+
+        console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%")
+
+        file.forEach(arrayElement=>{
+            console.log("-----------")
+            console.log(arrayElement)
+
+            if(typeof arrayElement==='string'|| typeof arrayElement==='number' ||typeof arrayElement==='boolean'){
+                if (typeof arrayElement === "string" && schema[0] === "String") {
+                    stringOk[1].push(arrayElement + ":" + schema)
+                }else if(typeof arrayElement === "number" && schema[0] === "Number"){
+                    numberOk[1].push(arrayElement + ":" + schema)
+                }else if(typeof arrayElement === "boolean" && schema[0] === "Boolean"){
+                    booleanOk[1].push(arrayElement + ":" + schema)
+                }else {throw `Error in array: In schema {key:${param} value:"${schema}"}, in json {key:${param} value:${file}}, wrong item in json: ${arrayElement}, type of wrong element: ${typeof arrayElement}`}
+            } else if(typeof arrayElement==='object'){
+                console.log("element w array")
+
+                console.log(arrayElement)
+
+                console.log(file)
+                console.log(schema)
+                console.log(schema[0])
+                compare(arrayElement,schema[0])
+            }
+        })
+        if(file.length===0){
+            console.log("zero")
+            console.log(file)
+            console.log(schema)
+
+            stringOk[1].push("[]"+ ":" +schema)
+        }
+
+
+
+
+        //compare(file[0],schema[0], param)
     }
 }
 
-compare(testFile, testSchema)
+compare(testFile, testSchema, keyOfError)
 
 console.log("-----------------------------WYNIKI-----------------------------")
 console.log()
