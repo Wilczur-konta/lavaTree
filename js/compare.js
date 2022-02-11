@@ -1,7 +1,7 @@
-let linesModule = require('./line_of_code')
+let linesModule = require('../line_of_code')
 
-let testFile = require("./tests/fileExample.json");
-let testSchema = require("./tests/schemaExample.json")
+let testFile = require("../tests/fileExample.json");
+let testSchema = require("../tests/schemaExample.json")
 
 let stringOk = ["poprawne string", []]
 let numberOk = ["poprawne number", []]

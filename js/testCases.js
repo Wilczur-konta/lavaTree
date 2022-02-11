@@ -1,6 +1,6 @@
-let linesModule = require('./line_of_code')
+let linesModule = require('../line_of_code')
 
-let a = require("./tests/invalid.json");
+let a = require("../tests/invalid.json");
 console.log(a)
 
 let resultOK =[]                    // Array z poprawnymi danymi
