@@ -11,7 +11,7 @@ let resultOfArrays = []             // Niepoprawne arrays
 let resultOfIncorrectVersion = []   // Array z danymi z niepoprawnych elementów wersjonowanych __v
 
 
-function checkSchema(obj) {
+exports.checkSchema = checkSchema=(obj)=> {
 
    for (let key in obj) {
 

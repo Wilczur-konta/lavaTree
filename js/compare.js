@@ -14,7 +14,7 @@ let keyInFileWersjonowane = ["Klucze wersjonowane"]
 
 let keyOfError = []
 
-let compare = (file, schema, param) => {
+exports.compare= compare = (file, schema, param) => {
     console.log(param)
     console.log(file)
     console.log(schema)
@@ -172,7 +172,7 @@ let compare = (file, schema, param) => {
     }
 }
 
-compare(testFile, testSchema, keyOfError)
+compare(testFile, testSchema, [])
 
 console.log("-----------------------------WYNIKI-----------------------------")
 console.log()
@@ -187,5 +187,6 @@ console.log(keyInFileWersjonowane)
 
 // zatrzymywanie programu w kolejnych elsach
 // 4 tablice porównujące klucze i zaliczające
-// jeżeli jest arrayem i w arrayu jest atomic obiekt
-//jeżeli w ogóle nic nie będzie w pliku - pierwszy warunek przed atomikiem ?
+// jeżeli jest arrayem i w arrayu jest atomic obiektc
+// //jeżeli w ogóle nic nie będzie w pliku - pierwszy warunek przed atomo wikiem ?
+// // linijka 119 - dopisać if file = empty & schemy != emptyj , to tedy? co jeśli w schemacie w obiekcie jest coś a w pliku pusty obiekt
