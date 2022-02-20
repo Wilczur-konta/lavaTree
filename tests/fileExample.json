@@ -1,4 +1,4 @@
-{ "emptyArr": [{}],
+let fielExample = { "emptyArr": [{"rasa": "Pudel"}],
     "hello": ["Joanna"],
     "info":"informacje",
     "kluczEmptyObj": {},

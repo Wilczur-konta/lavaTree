@@ -9,16 +9,21 @@ let booleanOk = ["poprawne boolean", []]
 
 let emptyObjects = ["empty object", []]
 
-let keyInFileZwykle = ["Klucze zwykłe"]
-let keyInFileWersjonowane = ["Klucze wersjonowane"]
+let keyInFileZwykle = ["FILE - Klucze zwykłe"]
+let keyInFileWersjonowane = ["FILE - Klucze wersjonowane"]
+
+let keyInSchemaZwykle = ["SCHEMAT - Klucze zwykłe"]
+let keyInSchemaWersjonowane = ["SCHEMAT - Klucze wersjonowane"]
 
 let keyOfError = []
-
+console.log(testFile)
 exports.compare= compare = (file, schema, param) => {
     console.log(param)
     console.log(file)
     console.log(schema)
     console.log(keyOfError)
+
+
 
     // if atomic
     if (typeof file !== 'object' && !Array.isArray(file) && !Array.isArray(schema)) {
@@ -59,6 +64,8 @@ exports.compare= compare = (file, schema, param) => {
                         //keyOfError.push(keyInFile)
 
                         compare(valueOfKeyInFile, valueOfKeyInSchema,keyInFile)           // wartosc klucza z pliku / wartosc klucza schematu
+                    } else {
+                        throw `Error - W schemacie brak klucza "${searchedKey}"`
                     }
                 }
                 deepSearch(schema, keyInFile,)
@@ -91,8 +98,12 @@ exports.compare= compare = (file, schema, param) => {
                                 let valueOfKeyInSchema = obj[searchedKey]
                                 console.log(valueOfKeyInSchema)                         // wartość znalezionego klucza ze schematu
 
+
+
                                 console.log("****************")
                                 compare(valueOfKeyInFile, valueOfKeyInSchema, param)           // wartosc klucza z pliku / wartosc klucza schematu
+                            } else {
+                                throw `Error - W schemacie brak klucza "${searchedKey}" w obiekcie wersjonowanym o kluczu ${prefix}  `
                             }
                         }
                         deepSearch(valueOfKeyInSchema, sufix)
@@ -107,6 +118,8 @@ exports.compare= compare = (file, schema, param) => {
 
 
             }
+
+
 
             if (!keyInFile.includes("_")) {
                 keyInFileZwykle.push(keyInFile)
@@ -170,6 +183,7 @@ exports.compare= compare = (file, schema, param) => {
 
         //compare(file[0],schema[0], param)
     }
+
 }
 
 compare(testFile, testSchema, [])
@@ -184,6 +198,7 @@ console.log()
 console.log(keyInFileZwykle)
 console.log(keyInFileWersjonowane)
 
+console.log(keyInSchemaZwykle)
 
 // zatrzymywanie programu w kolejnych elsach
 // 4 tablice porównujące klucze i zaliczające

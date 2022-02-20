@@ -1,7 +1,7 @@
-{ "emptyArr": [{}],
+exports.schemaExample = { "emptyArr": [{"rasa": "String"}],
   "hello": ["String"],
   "info":"String",
-  "kluczEmptyObj": {},
+  "kluczEmptyObj": {"gatunek": "ssak"},
   "dane__v": {
     "osobowe": {
       "imie": "String",
