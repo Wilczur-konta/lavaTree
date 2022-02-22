@@ -1,6 +1,6 @@
 {
   "name": "lava-tree",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simulating algebraic data types in JavaScript",
   "main": "compare.js",
   "scripts": {
