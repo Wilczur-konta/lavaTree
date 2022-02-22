@@ -33,7 +33,7 @@ exports.compare= compare = (file, schema, param) => {
             numberOk[1].push(file + ":" + schema)
         }else if(typeof file === "boolean" && schema === "Boolean"){
             booleanOk[1].push(file + ":" + schema)
-        } else {throw `Error -In schema {key:${param} value:"${schema}"}, in json type of value: ${typeof file} {key:${param} value:${file}}`}
+        } else {throw `Error -In schema type of value:${typeof schema} {${param}:"${schema}"}, in file type of value: ${typeof file} {${param}:${file}}`}
     } // jeśli jest obiektem, nie jest arrayem i nie jest pustym obiektem
     else if (typeof file === 'object' && typeof schema === 'object' && !Array.isArray(file) && !Array.isArray(schema) && Object.keys(file).length !== 0 && Object.keys(schema).length !== 0) {
         console.log("pliki sa obiektem")
@@ -65,7 +65,7 @@ exports.compare= compare = (file, schema, param) => {
 
                         compare(valueOfKeyInFile, valueOfKeyInSchema,keyInFile)           // wartosc klucza z pliku / wartosc klucza schematu
                     } else {
-                        throw `Error - W schemacie brak klucza "${searchedKey}"`
+                        throw `Error - this key is in file, and is missing in schema  ${JSON.stringify(searchedKey)}`
                     }
                 }
                 deepSearch(schema, keyInFile,)
@@ -92,7 +92,7 @@ exports.compare= compare = (file, schema, param) => {
                         //
                         let deepSearch = (obj, searchedKey) => {
 
-                            console.log(Object.keys(obj))
+                            let keyInSchema=Object.keys(obj)
                             if (Object.keys(obj).includes(searchedKey)) {  //if "klucze schematu" zawieraja szukany "klucz z pliku"
 
                                 let valueOfKeyInSchema = obj[searchedKey]
@@ -103,7 +103,7 @@ exports.compare= compare = (file, schema, param) => {
                                 console.log("****************")
                                 compare(valueOfKeyInFile, valueOfKeyInSchema, param)           // wartosc klucza z pliku / wartosc klucza schematu
                             } else {
-                                throw `Error - W schemacie brak klucza "${searchedKey}" w obiekcie wersjonowanym o kluczu ${prefix}  `
+                                throw `Error - in file: ${keyInFile}, in schema in ${prefix} - missing: "${sufix}"  `
                             }
                         }
                         deepSearch(valueOfKeyInSchema, sufix)
@@ -112,27 +112,19 @@ exports.compare= compare = (file, schema, param) => {
                         console.log("****************")
                         //compare(valueOfKeyInFile,valueOfKeyInSchema)           // wartosc klucza z pliku / wartosc klucza schematu
                     }
-                }
-
+                                  }
                 deepSearchII(schema, prefix)
-
-
             }
-
-
-
-            if (!keyInFile.includes("_")) {
-                keyInFileZwykle.push(keyInFile)
-            } else if (keyInFile.includes("_")) {
-                keyInFileWersjonowane.push(keyInFile)
-            }
-
-
         }
-    } // jeśli jest obiektem, nie jest arrayem i nie jest pustym obiektem
+    } // jeśli jest obiektem, nie jest arrayem jest pustym obiektem
     else if (typeof file === 'object' && typeof schema === 'object' && Object.keys(file).length === 0 && Object.keys(schema).length === 0) {
         emptyObjects[1].push(file + ":" + schema)
-    } //jest arrayem i nie jest pustym obiektem
+    } //jesli są obiektami, obiekt w pliku jest 0 a obiekt w schemacie jest >0 i plik nie jest arrayem
+    else if(typeof file === 'object' && typeof schema === 'object' && Object.keys(file).length === 0 && Object.keys(schema).length !== 0 && !Array.isArray(file) ){
+        throw `Error - for key: ${param} in file value is ${JSON.stringify(file)}, in schema value is ${JSON.stringify(schema)}`
+    }
+
+    //jest arrayem i jest pustym obiektem
     else if(Array.isArray(file) && Array.isArray(schema) && file.length===0 && schema.length===0){
         emptyObjects[1].push(file + ":" + schema)
 
@@ -158,7 +150,7 @@ exports.compare= compare = (file, schema, param) => {
                     numberOk[1].push(arrayElement + ":" + schema)
                 }else if(typeof arrayElement === "boolean" && schema[0] === "Boolean"){
                     booleanOk[1].push(arrayElement + ":" + schema)
-                }else {throw `Error in array: In schema {key:${param} value:"${schema}"}, in json {key:${param} value:${file}}, wrong item in json: ${arrayElement}, type of wrong element: ${typeof arrayElement}`}
+                }else {throw `Error in array: In schema {key:${JSON.stringify(param)} value:${JSON.stringify(schema)}}, in json {key:${JSON.stringify(param)} value:${JSON.stringify(file)}}, wrong item in file: ${JSON.stringify(arrayElement)}`}
             } else if(typeof arrayElement==='object'){
                 console.log("element w array")
 
@@ -177,13 +169,80 @@ exports.compare= compare = (file, schema, param) => {
 
             stringOk[1].push("[]"+ ":" +schema)
         }
-
-
-
-
-        //compare(file[0],schema[0], param)
     }
 
+    if (typeof schema === "object" && !Array.isArray(schema)) {
+
+            for (let keyInSchema in schema) {
+                console.log("klkl")
+                console.log(keyInSchema)
+                if (!keyInSchema.includes("_")) {
+                    console.log("lllllllllllllllllllllllllll")
+                    console.log(keyInSchema)
+                    keyInSchemaZwykle.push(keyInSchema)
+                } else if (keyInSchema.includes("_")) {
+                    keyInSchemaWersjonowane.push(keyInSchema)
+                }
+            }
+
+
+    }
+    if (typeof file === "object" && !Array.isArray(file)) {
+        for (let keyInFile in file)
+            if (!keyInFile.includes("_")) {
+                keyInFileZwykle.push(keyInFile)
+            } else if (keyInFile.includes("_")) {
+                keyInFileWersjonowane.push(keyInFile)
+            }
+    }
+/* if(keyInSchemaZwykle.length!==keyInFileZwykle.length){
+     let differenceI = keyInSchemaZwykle.filter(x=>!keyInFileZwykle.includes(x)) //key is in schema - key is not in file, tego klucza nie ma w pliku a jest w schemacie
+     let differenceII= keyInFileZwykle.filter(x=>!keyInSchemaZwykle.includes(x)) //key is in file - key is not in schema
+
+     console.log(differenceI)
+     console.log(differenceII)
+
+     if (differenceI.length !== 0 || differenceII.length!==0){
+
+     console.log("różnica")
+     console.log(differenceI)
+     throw `Error divergent keys names- in schema :"${differenceI}", key in file :"${differenceII}"`
+
+ }
+ }*/
+if(keyInSchemaWersjonowane.length!==0 || keyInFileWersjonowane.length!==0){
+
+    let arrSchema = []
+keyInSchemaWersjonowane.forEach(e=>{
+    let wynikSchema = e.substring(0,e.indexOf("_"))
+    arrSchema.push(wynikSchema)
+})
+    let arrFile = []
+    keyInFileWersjonowane.forEach(e=>{
+        let wynikFile = e.substring(0,e.indexOf("_"))
+        arrFile.push(wynikFile)
+    })
+
+    console.log(arrSchema)
+    console.log(keyInSchemaWersjonowane)
+    console.log(arrFile)
+    console.log(keyInFileWersjonowane)
+
+    let differenceIII = arrSchema.filter(x=>!arrFile.includes(x)) //key is in schema - key is not in file, tego klucza nie ma w pliku a jest w schemacie
+    let differenceIV = arrFile.filter(x=>!arrSchema.includes(x)) //key is in schema - key is not in file, tego klucza nie ma w pliku a jest w schemacie
+
+    console.log(differenceIII)
+    console.log(differenceIV)
+
+    if(differenceIII.length!==0){
+        throw `Error - In schema: versioned key: ${keyInSchemaWersjonowane}
+              No newly created key in file based on this from schema`
+
+    }if(differenceIV.length!==0){
+        throw `Error - newly created versioned key in file: ${keyInFileWersjonowane}
+               Versioned key ${differenceIV+"__v"} is missing in schema`
+    }
+}
 }
 
 compare(testFile, testSchema, [])
@@ -199,6 +258,7 @@ console.log(keyInFileZwykle)
 console.log(keyInFileWersjonowane)
 
 console.log(keyInSchemaZwykle)
+console.log(keyInSchemaWersjonowane)
 
 // zatrzymywanie programu w kolejnych elsach
 // 4 tablice porównujące klucze i zaliczające
