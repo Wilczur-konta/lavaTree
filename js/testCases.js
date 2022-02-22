@@ -82,7 +82,7 @@ exports.checkSchema = checkSchema=(obj)=> {
       }
       // if key name anded with __v && value !== 'object'  than error
       else if(key.includes("__v")  && typeof value !== 'object' ){
-         throw `Error : Key name: ${key}, this is versioned key and it's value must object`
+         throw `Error : Key name: ${key}, this is versioned key and it's value must object `
          //resultOfIncorrectVersion.push("Key is versioned, value is incorrect" + key + ":" + value)
       }
    }
