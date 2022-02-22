@@ -1,6 +1,6 @@
 
-let testFile = require("../tests/fileExample.json");
-let testSchema = require("../tests/schemaExample.json")
+//let testFile = require("../tests/fileExample.json");
+//let testSchema = require("../tests/schemaExample.json")
 
 let stringOk = ["correct string", []]
 let numberOk = ["correct number", []]
