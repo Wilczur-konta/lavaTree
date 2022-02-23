@@ -49,12 +49,12 @@ exports.checkSchema = checkSchema=(obj)=> {
             })
             //console.log(arrOfKeysOfValueWithUnderline)
 
-            if (key.includes("__v")  && typeof value === 'object' && Object.keys(value).length<2){
+            /*if (key.includes("__v")  && typeof value === 'object' && Object.keys(value).length<2){
 
                //console.log("Wrong value of versioned key  " + key + ":" + value)
                //resultOfIncorrectVersion.push("Key is versioned, value is incorrect  " + key + ":" + value)
                throw `Error : Key name: ${key}, this is versioned key and it's value must contain at least two pairs of key:value`
-            } else if(key.includes("__v")  && typeof value !== 'object'){
+            }*/if(key.includes("__v")  && typeof value !== 'object'){
                throw `Error : Key name: ${key}, this is versioned key and it's value must be object not ${value} `
             } else if(key.includes("__v") && arrOfKeysOfValueWithUnderline.length>0){
                throw `Error : key ${key} is versioned key and it's key must be a schema - can't be versioned, wrong key: ${JSON.stringify(arrOfKeysOfValueWithUnderline)}`
