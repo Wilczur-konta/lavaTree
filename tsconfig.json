@@ -1,0 +1,11 @@
+{
+    "name": "String",
+    "surname": "String",
+    "job__v": {
+        "unemployed": {},
+        "employed": {
+            "companyName": "String"
+        }
+    }
+}
+
