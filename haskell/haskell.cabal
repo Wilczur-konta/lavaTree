@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7477eba78570844791a0be104591ae713c0db57244f82f5d9ee934ffb4344bdf
+-- hash: ea435c591280bdc584e2ab373898213f8d7922aa56dffa99378f1aa46c8e6b79
 
 name:           haskell
 version:        0.1.0.0
@@ -28,6 +28,8 @@ source-repository head
 library
   exposed-modules:
       Lib
+      TypeGenerator
+      TypeGeneratorTest
   other-modules:
       Paths_haskell
   hs-source-dirs:
@@ -42,10 +44,13 @@ library
     , generic-data
     , lens
     , mtl
+    , neat-interpolation
     , postgresql-simple
     , split
     , template-haskell
     , text
+    , unordered-containers
+    , vector
   default-language: Haskell2010
 
 executable haskell-exe
@@ -66,10 +71,13 @@ executable haskell-exe
     , haskell
     , lens
     , mtl
+    , neat-interpolation
     , postgresql-simple
     , split
     , template-haskell
     , text
+    , unordered-containers
+    , vector
   default-language: Haskell2010
 
 test-suite haskell-test
@@ -91,8 +99,11 @@ test-suite haskell-test
     , haskell
     , lens
     , mtl
+    , neat-interpolation
     , postgresql-simple
     , split
     , template-haskell
     , text
+    , unordered-containers
+    , vector
   default-language: Haskell2010
