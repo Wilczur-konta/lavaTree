@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ea435c591280bdc584e2ab373898213f8d7922aa56dffa99378f1aa46c8e6b79
+-- hash: 1c926f901f0f4c8c095159f5f7c794fab7bad6fd98947a62bb7b2e92a2c110c6
 
 name:           haskell
 version:        0.1.0.0
@@ -30,6 +30,7 @@ library
       Lib
       TypeGenerator
       TypeGeneratorTest
+      TypeGeneratorTestI
   other-modules:
       Paths_haskell
   hs-source-dirs:

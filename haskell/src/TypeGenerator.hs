@@ -31,6 +31,8 @@ import NeatInterpolation (text)
 
 import Language.Haskell.TH
 
+import Data.Monoid
+
 import qualified Data.Map as M
 
 -- data KluczEmptyObj =
@@ -120,17 +122,17 @@ import qualified Data.Map as M
              
 
 
-genDepDefs :: T.Text -> LSchema ->  [Dec]
+genDepDefs :: T.Text -> LSchema ->  ([Dec],[Dec])
 genDepDefs t s =
       case s of
-        LSAtomic _ -> []
-        LSObject m -> concatMap (\(k,Left v) -> genLSchemaDef k v) $ M.toList m 
+        LSAtomic _ -> ([],[])
+        LSObject m -> mconcat $ map (\(k,Left v) -> genLSchemaDef k v) $ M.toList m 
         LSArray a  -> genLSchemaDef t a  
 
 
-genLSchemaDef :: T.Text -> LSchema -> [Dec]
+genLSchemaDef :: T.Text -> LSchema -> ([Dec],[Dec])
 genLSchemaDef name s =
-  genDepDefs name s  ++ genActDef
+  genDepDefs name s <> genActDef
     
   where
     genTypeName :: T.Text -> LSchema -> Type
@@ -159,26 +161,31 @@ genLSchemaDef name s =
             ,genTypeName k v )
         ) $ M.toList m  
 
-    genActDef :: [Dec]
+    genActDef :: ([Dec],[Dec])
     genActDef =
         case s of
-           LSAtomic _ -> []
+           LSAtomic _ -> ([],[])
            LSObject m ->
-             [DataD []
+             ([DataD []
                 (mkName (T.unpack $ T.toTitle name))
-                [] Nothing [genConst m] []
-             , fromJsonInstanceDec m]
-           LSArray _ -> []
+                [] Nothing [genConst m] []]
+             , [fromJsonInstanceDec m])
+           LSArray _ -> ([],[])
 
        where
         fromJsonInstanceDec :: LObject -> Dec
         fromJsonInstanceDec m = InstanceD Nothing []
-          (AppT (ConT(mkName "FromJSON"))
+          (AppT (ConT(mkName "A.FromJSON"))
           (ConT(mkName (T.unpack(T.toTitle name)))))
           [ FunD (mkName "parseJSON")
-           [Clause [ConP (mkName "A.Object") [VarP (mkName "x")]]
-              (NormalB b) [] 
-           ]]
+          [Clause [ConP (mkName "A.Object") [VarP (mkName "x")]]
+           (NormalB b) [
+              FunD (mkName "y")
+               [Clause []
+               (NormalB doexp) [] 
+               ]
+
+                       ]]]
             where
               b :: Exp
               b = CaseE  (VarE (mkName "y"))
@@ -186,7 +193,54 @@ genLSchemaDef name s =
                    (NormalB $ VarE (mkName "undefined")) [],
                    Match (ConP (mkName "Just") [VarP (mkName "x")] )
                    (NormalB $ (AppE (VarE (mkName "pure") ) (VarE (mkName "x"))) ) []
-                   ]
+                  ]
+
+              doexp :: Exp
+              doexp = DoE (fieldsS ++
+                            [NoBindS (AppE (VarE $ mkName "return") returnS)])
+
+                where
+                  
+                  fieldsN :: [String]
+                  fieldsN = fmap T.unpack $ M.keys m
+                  
+                  fieldsA :: [(Exp,Stmt)]
+                  fieldsA =
+                    [let nm' = mkName $ "v" ++ show i
+                     in (VarE nm',
+                         BindS (VarP nm') $
+                           AppE ( VarE (mkName "join"))
+                           (AppE (AppE ( VarE (mkName "AT.parseMaybe"))
+                            ( LamE [(VarP $ mkName "xx")]
+                              (InfixE
+                               (Just (VarE $ mkName "xx"))
+                               (VarE (mkName "A..:?"))
+                               (Just (AppE (VarE $ mkName "T.pack")
+                                     (LitE (StringL nm))))
+                              )
+                            ))
+                            (VarE $ mkName "x")
+                            )
+                           
+                         ) 
+                    | (i, nm)<- zip ([0..]) (fieldsN)]
+
+     -- v0 <- (join  (AT.parseMaybe (\xx -> xx A..:? (T.pack "imie")) x))
+
+                  fieldsS :: [Stmt]
+                  fieldsS = snd $ unzip fieldsA 
+
+                  returnS :: Exp
+                  returnS = foldl AppE (ConE (mkName $ T.unpack $ T.toTitle  name))
+                  
+                                  $ fst $ unzip fieldsA
+                    -- AppE (VarE $ mkName "return")
+                    -- (VarE $ mkName "v0")
+
+              -- [BindS (VarP (mkName "v0"))
+              --              (LitE (StringL "v0"))
+              --             ,NoBindS (AppE (mkName ) )
+              --             ]
  
 
 
@@ -217,15 +271,23 @@ test :: IO ()
 test = do
   case (A.eitherDecode exampleLavaSchema1) of
     Left x -> putStrLn x
-    Right x -> putStrLn $ pprint $ genLSchemaDef "NazwaTypu" x
+    Right x ->
+      do putStrLn $ pprint $ fst $ genLSchemaDef "NazwaTypu" x
+         putStrLn $ pprint $ snd $ genLSchemaDef "NazwaTypu" x
 
 
-testQ :: Q [Dec]
-testQ = return $
+testQD :: Q [Dec]
+testQD = return $
   case (A.eitherDecode exampleLavaSchema1) of
     Left x ->  []
-    Right x -> genLSchemaDef "NazwaTypu" x
+    Right x -> fst $ genLSchemaDef "NazwaTypu" x
 
+
+testQI :: Q [Dec]
+testQI = return $
+  case (A.eitherDecode exampleLavaSchema1) of
+    Left x ->  []
+    Right x -> snd $ genLSchemaDef "NazwaTypu" x
 
 
 -- { "emptyArr":[ "String"],

@@ -8,7 +8,6 @@
 {-# LANGUAGE QuasiQuotes, OverloadedStrings #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -16,6 +15,14 @@
 module TypeGeneratorTest where
 
 import TypeGenerator
-import Language.Haskell.TH 
+import Language.Haskell.TH
+import qualified  Data.Aeson.Types as AT 
 
-$(testQ)
+
+import qualified Data.Text as T
+import Control.Monad
+
+import qualified  Data.Aeson as A
+
+$(testQD)
+$(testQI)
