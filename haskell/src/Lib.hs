@@ -1,3 +1,4 @@
+{-# LANGUAGE TupleSections #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -79,6 +80,7 @@ instance FromJSON LAtom where
 
 
 instance FromJSON LSchema  where
+
   parseJSON (String x ) =
     case x of
       "String" -> pure $ LSAtomic LAString
@@ -86,19 +88,50 @@ instance FromJSON LSchema  where
       "Boolean"-> pure $ LSAtomic  LABool
       _        -> typeMismatch "Not lavatree Atom Value" (String x)
 
-  parseJSON (Object x) =
-    LSObject <$> fmap Left <$> M.fromList <$> h  
-    where
-      h :: Parser [(Text, LSchema)]
-      h = HM.toList <$> traverse parseJSON x 
-    
-  
   parseJSON (Array a )
-    | V.length a /= 1 =
-        typeMismatch
-          "Only arrays with one element allowed in LTreSchema"
-          (Array a)
-    | otherwise = LSArray <$> parseJSON (V.head a)
+      | V.length a /= 1 =
+          typeMismatch
+            "Only arrays with one element allowed in LTreSchema"
+            (Array a)
+      | otherwise = LSArray <$> parseJSON (V.head a)
+
+
+  parseJSON (Object x) =
+    LSObject <$> M.fromList <$> h' (HM.toList x)  
+    where
+      
+      decodeFieldLabel :: Text -> Either Text Text
+      decodeFieldLabel t
+         | T.unpack (T.takeEnd 3 t) == "__v" = Right (T.dropEnd 3 t) 
+         | otherwise = Left t
+    
+      fieldP :: Text -> Either (Text , Value -> Parser LSchema)
+                               (Text, Value -> Parser LVariants)
+      fieldP t =
+        case decodeFieldLabel t of
+          Left l  -> Left (l, parseJSON)  
+          Right r -> Right (r , parseLVariants)
+
+            where
+              parseLVariants :: Value -> Parser LVariants
+              parseLVariants (Object x) = M.fromList <$> h
+                  where
+                    h :: Parser [(Text, LSchema)]
+                    h = HM.toList <$> traverse parseJSON x 
+              parseLVariants x =
+                typeMismatch "Only object is allowed as variant specification" x
+
+     
+ 
+
+      h' :: [(Text, Value)] -> Parser [(Text, Either LSchema LVariants)]
+      h' = traverse (\(t , v) ->
+                        case fieldP t of
+                          Left (t',l) -> ((t',) . Left) <$> l v
+                          Right (t',r) -> ((t',) . Right) <$> r v
+                       ) 
+  
+  
  
             
 
@@ -192,7 +225,7 @@ exampleLavaSchema =
 { "emptyArr": [{"rasa": "String"}],
   "hello": ["String"],
   "info":"String",
-  "kluczEmptyObj": {"gatunek": "ssak"},
+  "kluczEmptyObj": {"gatunek": "String"},
   "dane__v": {
     "osobowe": {
       "imie": "String",
@@ -230,7 +263,7 @@ exampleLavaSchema1 =
       "inne": {
         "email":"String"
       }
-    }
+   } 
   }
 }
  |]  

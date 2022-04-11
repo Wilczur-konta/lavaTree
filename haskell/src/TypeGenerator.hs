@@ -88,40 +88,6 @@ import qualified Data.Map as M
 -- |]  
 
 
-
-
-
-
-
-
--- data Inne =
---   Inne
---   { email :: String
---   }
-
--- data Kontaktowe =
---   Kontaktowe
---   { telefon :: String
---   , inne :: Inne
---   }
-
--- data Dane =
---   Dane
---   { osobowe :: ()
---   , kontaktowe :: ()
---   }
- 
--- data NazwaTypu =
---   NazwaTypu
---     { emptyArr :: [String]
---     , hello :: String
---     , info :: String
---     , kluczEmptyObject :: [KluczEmptyObj]
---     , dane :: ()
---     }
-             
-
-
 genDepDefs :: T.Text -> LSchema ->  ([Dec],[Dec])
 genDepDefs t s =
       case s of
@@ -225,8 +191,6 @@ genLSchemaDef name s =
                          ) 
                     | (i, nm)<- zip ([0..]) (fieldsN)]
 
-     -- v0 <- (join  (AT.parseMaybe (\xx -> xx A..:? (T.pack "imie")) x))
-
                   fieldsS :: [Stmt]
                   fieldsS = snd $ unzip fieldsA 
 
@@ -234,35 +198,6 @@ genLSchemaDef name s =
                   returnS = foldl AppE (ConE (mkName $ T.unpack $ T.toTitle  name))
                   
                                   $ fst $ unzip fieldsA
-                    -- AppE (VarE $ mkName "return")
-                    -- (VarE $ mkName "v0")
-
-              -- [BindS (VarP (mkName "v0"))
-              --              (LitE (StringL "v0"))
-              --             ,NoBindS (AppE (mkName ) )
-              --             ]
- 
-
-
-
-
--- instance AT.FromJSON Osobowe where
---   parseJSON (A.Object x) =
---     case y of
---       Nothing -> undefined
---       Just x  -> pure x
-
---    where
---      y :: Maybe Osobowe
---      y = do
---        v0 <- (join  (AT.parseMaybe (\xx -> xx A..:? (T.pack "imie")) x))
---        v1 <- (join  (AT.parseMaybe (\xx -> xx A..:? (T.pack "adres")) x))
---        return $ Osobowe v0 v1
-
-
-
-
-
 
 
       
@@ -274,6 +209,8 @@ test = do
     Right x ->
       do putStrLn $ pprint $ fst $ genLSchemaDef "NazwaTypu" x
          putStrLn $ pprint $ snd $ genLSchemaDef "NazwaTypu" x
+
+
 
 
 testQD :: Q [Dec]
@@ -290,21 +227,21 @@ testQI = return $
     Right x -> snd $ genLSchemaDef "NazwaTypu" x
 
 
--- { "emptyArr":[ "String"],
---   "hello": "String",
---   "info":"String",
---   "kluczEmptyObj": [{"gatunek": "String"}],
---   "dane": {
---     "osobowe": {
---       "imie": "String",
---       "adres": "String"
---     },
---     "kontaktowe": {
---       "telefon": "String",
---       "inne": {
---         "email":"String",
---       }
---     }
---   }
--- }
---  |]  
+-- instance ToJSON LAtom where
+--   toJSON :: LAtom -> Value
+--   toJSON LAString = "String"
+--   toJSON LANumber = "Number"
+--   toJSON LABool = "Boolean"
+
+
+-- instance ToJSON LSchema where
+--   toJSON :: LSchema -> Value
+--   toJSON (LSAtomic a) = toJSON a
+--   toJSON (LSArray l) = toJSON [l]
+--   toJSON (LSObject o) =
+--      toJSON $ M.fromList $  h <$> (M.toList o) 
+
+--     where
+--       h :: (Text , (Either LSchema LVariants)) -> (Text , Value)
+--       h (k , (Left x)) = (k , toJSON x)
+--       h (k , (Right y)) = (k <> "__v" , (toJSON y))

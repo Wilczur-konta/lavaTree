@@ -26,3 +26,27 @@ import qualified  Data.Aeson as A
 
 $(testQD)
 $(testQI)
+
+
+instance A.ToJSON Inne where
+  toJSON x  =
+    A.object
+    [
+     "email" A..= email x
+    ]
+
+
+
+instance A.ToJSON Kontaktowe where
+  toJSON x =
+    A.object
+    [
+      "inne" A..= (A.toJSON (inne x))
+    , "telefon" A..= A.toJSON (telefon x)
+    ]
+  
+d :: Inne
+d = Inne "jakas inna informacja"
+
+k :: Kontaktowe
+k = Kontaktowe d "80203049"
