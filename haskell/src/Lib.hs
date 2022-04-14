@@ -50,17 +50,19 @@ type LObject = M.Map Text (Either LSchema LVariants)
 data LSchema = LSAtomic LAtom | LSObject LObject | LSArray LSchema deriving (Show)
 
 
-instance ToJSON LAtom where
-  toJSON :: LAtom -> Value
-  toJSON LAString = "String"
-  toJSON LANumber = "Number"
-  toJSON LABool = "Boolean"
+-- instance ToJSON LAtom where
+--   toJSON :: LAtom -> Value
+--   toJSON LAString = "String"
+--   toJSON LANumber = "Number"
+--   toJSON LABool = "Boolean"
 
 
 instance ToJSON LSchema where
-  toJSON :: LSchema -> Value
-  toJSON (LSAtomic a) = toJSON a
-  toJSON (LSArray l) = toJSON [l]
+  -- toJSON :: LSchema -> Value
+  toJSON (LSAtomic LAString) = "String"
+  toJSON (LSAtomic LANumber) = "Number"
+  toJSON (LSAtomic LABool) = "Boolean"
+  toJSON (LSArray l) = (toJSON [l])
   toJSON (LSObject o) =
      toJSON $ M.fromList $  h <$> (M.toList o) 
 
@@ -69,21 +71,21 @@ instance ToJSON LSchema where
       h (k , (Left x)) = (k , toJSON x)
       h (k , (Right y)) = (k <> "__v" , (toJSON y))
 
-instance FromJSON LAtom where
-  parseJSON (String x) = pure $
-    case x of
-      "String" -> LAString
-      "Number" -> LANumber
-      "Boolean" -> LABool
+-- instance FromJSON LAtom where
+--   parseJSON (String x) = pure $
+--     case x of
+--       "String" -> LAString
+--       "Number" -> LANumber
+--       "Boolean" -> LABool
       
-  parseJSON badValue = typeMismatch "Not lavatree Atom Value" badValue      
+--   parseJSON badValue = typeMismatch "Not lavatree Atom Value" badValue      
 
 
 instance FromJSON LSchema  where
 
   parseJSON (String x ) =
     case x of
-      "String" -> pure $ LSAtomic LAString
+      "String" ->pure $  LSAtomic LAString
       "Number" -> pure $ LSAtomic LANumber
       "Boolean"-> pure $ LSAtomic  LABool
       _        -> typeMismatch "Not lavatree Atom Value" (String x)
@@ -93,11 +95,11 @@ instance FromJSON LSchema  where
           typeMismatch
             "Only arrays with one element allowed in LTreSchema"
             (Array a)
-      | otherwise = LSArray <$> parseJSON (V.head a)
+      | otherwise = LSArray <$>( parseJSON (V.head a)) :: Parser LSchema
 
 
   parseJSON (Object x) =
-    LSObject <$> M.fromList <$> h' (HM.toList x)  
+    LSObject <$> M.fromList <$> (h' (HM.toList x)) :: Parser LSchema   
     where
       
       decodeFieldLabel :: Text -> Either Text Text
@@ -267,3 +269,12 @@ exampleLavaSchema1 =
   }
 }
  |]  
+
+
+els1 :: B.ByteString
+els1 =
+  DTE.encodeUtf8 $ TL.fromStrict  $ [text|
+
+["String"]
+
+ |]

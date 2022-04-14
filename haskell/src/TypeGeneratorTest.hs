@@ -14,6 +14,8 @@
 
 module TypeGeneratorTest where
 
+
+import Lib
 import TypeGenerator
 import Language.Haskell.TH
 import qualified  Data.Aeson.Types as AT 
@@ -41,8 +43,8 @@ instance A.ToJSON Kontaktowe where
   toJSON x =
     A.object
     [
-      "inne" A..= (A.toJSON (inne x))
-    , "telefon" A..= A.toJSON (telefon x)
+      "inne" A..= inne x
+    , "telefon" A..= telefon x
     ]
   
 d :: Inne

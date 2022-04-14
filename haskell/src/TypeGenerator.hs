@@ -35,58 +35,7 @@ import Data.Monoid
 
 import qualified Data.Map as M
 
--- data KluczEmptyObj =
---   KluczEmptyObj
---   { gatunek :: String
---   }
-
--- instance AT.FromJSON KluczEmptyObj where
---   parseJSON (A.Object x) =
---     case y of
---       Nothing -> undefined
---       Just x  -> pure x
-
---    where
---      y :: Maybe KluczEmptyObj
---      y = do
---        v0 <- (join  (AT.parseMaybe (\xx -> xx A..:? (T.pack "gatunek")) x))
---        return $ KluczEmptyObj v0
-
-    
---     -- case toListKluczEmptyObj <$> undefined
-  
-
-
-
--- data Osobowe =
---   Osobowe
---   { imie :: String
---   , adres :: String
---   } deriving Show
-
--- instance AT.FromJSON Osobowe where
---   parseJSON (A.Object x) =
---     case y of
---       Nothing -> undefined
---       Just x  -> pure x
-
---    where
---      y :: Maybe Osobowe
---      y = do
---        v0 <- (join  (AT.parseMaybe (\xx -> xx A..:? (T.pack "imie")) x))
---        v1 <- (join  (AT.parseMaybe (\xx -> xx A..:? (T.pack "adres")) x))
---        return $ Osobowe v0 v1
-
-
--- exam1 :: B.ByteString
--- exam1 =
---   DTE.encodeUtf8 $ TL.fromStrict  $ [text|
---  {
---    "imie" : "Krystian",
---    "adres" : "Stalowa"
---    }
--- |]  
-
+ -- putStrLn $ pprint $ snd $ genLSchemaDef "NazwaTypu" x
 
 genDepDefs :: T.Text -> LSchema ->  ([Dec],[Dec])
 genDepDefs t s =
@@ -198,17 +147,26 @@ genLSchemaDef name s =
                   returnS = foldl AppE (ConE (mkName $ T.unpack $ T.toTitle  name))
                   
                                   $ fst $ unzip fieldsA
+                            
 
-
-      
-
-test :: IO ()
+test ::IO ()
 test = do
   case (A.eitherDecode exampleLavaSchema1) of
     Left x -> putStrLn x
     Right x ->
       do putStrLn $ pprint $ fst $ genLSchemaDef "NazwaTypu" x
          putStrLn $ pprint $ snd $ genLSchemaDef "NazwaTypu" x
+
+
+
+testS :: IO ()
+testS = do
+  case (A.eitherDecode exampleLavaSchema1) of
+    Left x -> putStrLn x
+    Right x ->
+      do putStrLn $ pprint $ fst $ genLSchemaDef "NazwaTypu" x
+         putStrLn $ pprint $ snd $ genLSchemaDef "NazwaTypu" x
+
 
 
 
@@ -225,6 +183,10 @@ testQI = return $
   case (A.eitherDecode exampleLavaSchema1) of
     Left x ->  []
     Right x -> snd $ genLSchemaDef "NazwaTypu" x
+
+
+
+
 
 
 -- instance ToJSON LAtom where
@@ -245,3 +207,82 @@ testQI = return $
 --       h :: (Text , (Either LSchema LVariants)) -> (Text , Value)
 --       h (k , (Left x)) = (k , toJSON x)
 --       h (k , (Right y)) = (k <> "__v" , (toJSON y))
+
+
+-- instance A.ToJSON Inne where
+--   toJSON x  =
+--     A.object
+--     [
+--      "email" A..= email x
+--     ]
+
+-- instance A.ToJSON Kontaktowe where
+--   toJSON x =
+--     A.object
+--     [
+--       "inne" A..= (A.toJSON (inne x))
+--     , "telefon" A..= A.toJSON (telefon x)
+--     ]
+  
+-- d :: Inne
+-- d = Inne "jakas inna informacja"
+
+-- k :: Kontaktowe
+-- k = Kontaktowe d "80203049"
+
+
+
+
+
+-- data KluczEmptyObj =
+--   KluczEmptyObj
+--   { gatunek :: String
+--   }
+
+-- instance AT.FromJSON KluczEmptyObj where
+--   parseJSON (A.Object x) =
+--     case y of
+--       Nothing -> undefined
+--       Just x  -> pure x
+
+--    where
+--      y :: Maybe KluczEmptyObj
+--      y = do
+--        v0 <- (join  (AT.parseMaybe (\xx -> xx A..:? (T.pack "gatunek")) x))
+--        return $ KluczEmptyObj v0
+
+    
+--     -- case toListKluczEmptyObj <$> undefined
+  
+
+
+
+-- data Osobowe =
+--   Osobowe
+--   { imie :: String
+--   , adres :: String
+--   } deriving Show
+
+-- instance AT.FromJSON Osobowe where
+--   parseJSON (A.Object x) =
+--     case y of
+--       Nothing -> undefined
+--       Just x  -> pure x
+
+--    where
+--      y :: Maybe Osobowe
+--      y = do
+--        v0 <- (join  (AT.parseMaybe (\xx -> xx A..:? (T.pack "imie")) x))
+--        v1 <- (join  (AT.parseMaybe (\xx -> xx A..:? (T.pack "adres")) x))
+--        return $ Osobowe v0 v1
+
+
+-- exam1 :: B.ByteString
+-- exam1 =
+--   DTE.encodeUtf8 $ TL.fromStrict  $ [text|
+--  {
+--    "imie" : "Krystian",
+--    "adres" : "Stalowa"
+--    }
+-- |]  
+
