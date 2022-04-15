@@ -30,22 +30,22 @@ $(testQD)
 $(testQI)
 
 
-instance A.ToJSON Inne where
-  toJSON x  =
-    A.object
-    [
-     "email" A..= email x
-    ]
+-- instance A.ToJSON Inne where
+--   toJSON x  =
+--     A.object
+--     [
+--      "email" A..= email x
+--     ]
 
 
 
-instance A.ToJSON Kontaktowe where
-  toJSON x =
-    A.object
-    [
-      "inne" A..= inne x
-    , "telefon" A..= telefon x
-    ]
+-- instance A.ToJSON Kontaktowe where
+--   toJSON x =
+--     A.object
+--     [
+--       "inne" A..= inne x
+--     , "telefon" A..= telefon x
+--     ]
   
 d :: Inne
 d = Inne "jakas inna informacja"

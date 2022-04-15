@@ -37,6 +37,8 @@ import qualified Data.Map as M
 
  -- putStrLn $ pprint $ snd $ genLSchemaDef "NazwaTypu" x
 
+  -- [[[{"key":"String"}]]]
+
 genDepDefs :: T.Text -> LSchema ->  ([Dec],[Dec])
 genDepDefs t s =
       case s of
@@ -61,7 +63,6 @@ genLSchemaDef name s =
             
         LSObject _ -> ConT (mkName $ T.unpack $ T.toTitle t)
         LSArray o  -> AppT ListT (genTypeName t o)   
-
     
     b :: Bang
     b = Bang NoSourceUnpackedness NoSourceStrictness
@@ -80,14 +81,19 @@ genLSchemaDef name s =
     genActDef =
         case s of
            LSAtomic _ -> ([],[])
+           LSArray _  -> ([],[])
            LSObject m ->
              ([DataD []
                 (mkName (T.unpack $ T.toTitle name))
                 [] Nothing [genConst m] []]
-             , [fromJsonInstanceDec m])
-           LSArray _ -> ([],[])
+             -- , [fromJsonInstanceDec m])
+              , [toJsonInstanceDec m])
+
+             
+        -- ---------------------------------------  
 
        where
+
         fromJsonInstanceDec :: LObject -> Dec
         fromJsonInstanceDec m = InstanceD Nothing []
           (AppT (ConT(mkName "A.FromJSON"))
@@ -147,7 +153,66 @@ genLSchemaDef name s =
                   returnS = foldl AppE (ConE (mkName $ T.unpack $ T.toTitle  name))
                   
                                   $ fst $ unzip fieldsA
+
+
+  
+-- instance AT.FromJSON KluczEmptyObj where
+--   parseJSON (A.Object x) =
+--     case y of
+--       Nothing -> undefined
+--       Just x  -> pure x
+
+--    where
+--      y :: Maybe KluczEmptyObj
+--      y = do
+--        v0 <- (join  (AT.parseMaybe (\xx -> xx A..:? (T.pack "gatunek")) x))
+--        return $ KluczEmptyObj v0
+
+
                             
+
+
+        toJsonInstanceDec   :: LObject -> Dec
+        toJsonInstanceDec h  = InstanceD Nothing []
+                                (AppT (ConT(mkName "A.ToJSON"))
+                                (ConT(mkName (T.unpack (T.toTitle name)))))
+                                 [FunD (mkName "toJSON")
+                                  [Clause [VarP (mkName "x")]
+                                   (NormalB t)
+                                   []]
+                                 ]
+                               where
+                                 t :: Exp
+                                 t =  AppE (VarE (mkName "A.object" ))
+                                           (ListE (fmap (\(k,Left v) -> InfixE (Just (LitE (StringL ( T.unpack k ))))
+                                                                  (VarE (mkName "A..="))
+                                                                  (Just (AppE (VarE (mkName "A.toJSON"))
+                                                                              (AppE (VarE (mkName (T.unpack k) ))
+                                                                                    (VarE (mkName "x" ))
+                                                                              )
+                                                                        )
+                                                                  )
+                                                        ) $ M.toList h
+                                                  )
+                                           )
+
+
+                                      
+                                 
+-- instance A.ToJSON Kontaktowe where
+--   toJSON x =
+--     A.object
+--     [
+--       "inne" A..= (A.toJSON (inne x))
+--     , "telefon" A..= A.toJSON (telefon x)
+--     ]
+
+
+
+
+-- ___________ EXAMPLES and TESTS _____________ 
+
+
 
 test ::IO ()
 test = do
@@ -159,13 +224,13 @@ test = do
 
 
 
-testS :: IO ()
-testS = do
-  case (A.eitherDecode exampleLavaSchema1) of
-    Left x -> putStrLn x
-    Right x ->
-      do putStrLn $ pprint $ fst $ genLSchemaDef "NazwaTypu" x
-         putStrLn $ pprint $ snd $ genLSchemaDef "NazwaTypu" x
+-- testS ::  IO ()
+-- testS  = do
+--   case (A.eitherDecode els1 ) of
+--     Left x -> putStrLn x
+--     Right x ->
+--       do putStrLn $ pprint $ fst $ genLSchemaDef "NazwaTypu" x
+--          putStrLn $ pprint $ snd $ genLSchemaDef "NazwaTypu" x
 
 
 
