@@ -27,28 +27,13 @@ import Control.Monad
 import qualified  Data.Aeson as A
 
 $(testQD)
-$(testQI)
+-- $(testQF)
+-- $(testQT)
 
 
--- instance A.ToJSON Inne where
---   toJSON x  =
---     A.object
---     [
---      "email" A..= email x
---     ]
-
-
-
--- instance A.ToJSON Kontaktowe where
---   toJSON x =
---     A.object
---     [
---       "inne" A..= inne x
---     , "telefon" A..= telefon x
---     ]
   
-d :: Inne
-d = Inne "jakas inna informacja"
+-- d :: Inne
+-- d = Inne "jakas inna informacja"
 
-k :: Kontaktowe
-k = Kontaktowe d "80203049"
+-- k :: Kontaktowe
+-- k = Kontaktowe d "80203049"

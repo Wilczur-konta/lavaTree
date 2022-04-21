@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ea435c591280bdc584e2ab373898213f8d7922aa56dffa99378f1aa46c8e6b79
+-- hash: 1b4a1d8e5cbbfcea91ae1cdcf58ed4e256416ce41c92bd6461cb14be365b3f59
 
 name:           haskell
 version:        0.1.0.0
@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       Lib
+      ReadSchemas
       TypeGenerator
       TypeGeneratorTest
   other-modules:
