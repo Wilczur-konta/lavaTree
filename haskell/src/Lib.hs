@@ -1,3 +1,4 @@
+{-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -14,14 +15,13 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE FlexibleInstances #-}
 
-
 module Lib where
 
 import Language.Haskell.TH 
 import Data.Char
 import qualified Data.Map as M
 import qualified Data.Vector as V
-
+import Data.Maybe
 
 import Data.Aeson as A
 import Data.ByteString
@@ -48,6 +48,7 @@ type LVariants = M.Map Text LSchema
 type LObject = M.Map Text (Either LSchema LVariants)  
 
 data LSchema = LSAtomic LAtom | LSObject LObject | LSArray LSchema deriving (Show)
+
 
 
 instance ToJSON LSchema where
@@ -119,8 +120,34 @@ instance FromJSON LSchema  where
 
 
 
+class LavaValue a where
+  -- lavaSchema :: a -> LSchema
+  lavaWrite  :: a ->  (T.Text, A.Value)
+   
+
+instance {-# OVERLAPPING #-} LavaValue String where
+  -- lavaSchema _ = LSAtomic LAString
+  -- lavaRead (_, x) = A.fromJSON x
+  lavaWrite x = ("", A.toJSON x )
+
+instance LavaValue Int where
+  -- lavaSchema _ = LSAtomic LANumber
+  -- lavaRead (_, x) = A.fromJSON x
+  lavaWrite x = ("", A.toJSON x )
+
+instance LavaValue Bool where
+  -- lavaSchema _ = LSAtomic LABool
+  -- lavaRead (_, x) = A.fromJSON x
+  lavaWrite x = ("", A.toJSON x )
+
+instance {-# OVERLAPPING #-} LavaValue a => LavaValue [a] where
+  -- lavaSchema _ = LSAtomic LABool
+  -- lavaRead (_, x) = A.fromJSON x
+  lavaWrite x = ("", A.toJSON ((snd . lavaWrite) <$> x) )
+                
 
 -- ____________EXAMPLES_______________
+-- ###################################
 
 
 
@@ -217,6 +244,36 @@ exampleLavaSchema =
 }
  |]
 
+
+
+
+
+  
+
+l :: B.ByteString
+l =
+  DTE.encodeUtf8 $ TL.fromStrict  $ [text|
+
+{ "emptyArr": [{"rasa": "String"}],
+  "hello": ["String"],
+  "info":"String",
+  "kluczEmptyObj": {"gatunek": "String"},
+  "dane__v": {
+    "osobowe": {
+      "imie": "String",
+      "adres": "String"
+    },
+    "kontaktowe": {
+      "telefon": "String",
+      "inne__v": {
+        "email":"String",
+        "telefon": "String"
+      }
+    }
+  }
+}
+ |]  
+  
 --  (eitherDecode exampleLavaSchema1) :: (Either String LSchema)
 
   
@@ -241,7 +298,52 @@ exampleLavaSchema1 =
    } 
   }
 }
+ |]
+
+lavaSchema1 :: B.ByteString
+lavaSchema1 =
+  DTE.encodeUtf8 $ TL.fromStrict  $ [text|
+{
+      "telefon": "String",
+      "inne": {
+        "email":"String"
+      }
+   } 
+  
+ |]
+
+lavaSchemaKontakt :: LSchema
+lavaSchemaKontakt = fromJust ((A.decode lavaSchema1) :: Maybe LSchema)
+  
+testl1 :: IO ()
+testl1 =  B.putStr  $ A.encode $  fromJust ((A.decode l1) :: Maybe LSchema)
+
+testl :: IO ()
+testl =  B.putStr $ A.encode $  fromJust ((A.decode l) :: Maybe LSchema)
+
+l1 :: B.ByteString
+l1 =
+  DTE.encodeUtf8 $ TL.fromStrict  $ [text|
+
+{ "emptyArr":[ "String"],
+  "hello": "String",
+  "info":"String",
+  "kluczEmptyObj": [{"gatunek": "String"}],
+  "dane": {
+    "osobowe": {
+      "imie": "String",
+      "adres": "String"
+    },
+    "kontaktowe": {
+      "telefon": "String",
+      "inne": {
+        "email":"String"
+      }
+   } 
+  }
+}
  |]  
+  
 
 
 els1 :: B.ByteString
