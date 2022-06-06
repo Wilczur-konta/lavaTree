@@ -20,7 +20,7 @@ import TypeGenerator
 import Language.Haskell.TH
 import qualified  Data.Aeson.Types as AT 
 
-
+import qualified Data.HashMap.Strict as HM   
 import qualified Data.Text as T
 import Control.Monad
 
@@ -78,7 +78,9 @@ instance LavaValue Kontaktowe where
         A..= (snd $ lavaWrite (telefon x))
     ])
 
-  lavaRead ("", A.Object x) = undefined
+  lavaRead ("", A.Object x) = do
+    let l = HM.toList x
+    
   lavaRead (_, _) = A.Error "Malformed object"
   
 

@@ -14,6 +14,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Lib where
 
@@ -118,33 +119,46 @@ instance FromJSON LSchema  where
                           Right (t',r) -> ((t',) . Right) <$> r v
                        )
 
-
+-- TODO zamiast T.Text dać (Maybe T.Text)
 
 class LavaValue a where
   -- lavaSchema :: a -> LSchema
   lavaWrite  :: a ->  (T.Text, A.Value)
-   
+  lavaRead :: (T.Text, A.Value) -> A.Result a    
 
 instance {-# OVERLAPPING #-} LavaValue String where
   -- lavaSchema _ = LSAtomic LAString
-  -- lavaRead (_, x) = A.fromJSON x
+  lavaRead (_, x) = A.fromJSON x
   lavaWrite x = ("", A.toJSON x )
 
 instance LavaValue Int where
   -- lavaSchema _ = LSAtomic LANumber
-  -- lavaRead (_, x) = A.fromJSON x
+  lavaRead (_, x) = A.fromJSON x
   lavaWrite x = ("", A.toJSON x )
 
 instance LavaValue Bool where
   -- lavaSchema _ = LSAtomic LABool
-  -- lavaRead (_, x) = A.fromJSON x
+  lavaRead (_, x) = A.fromJSON x
   lavaWrite x = ("", A.toJSON x )
 
 instance {-# OVERLAPPING #-} LavaValue a => LavaValue [a] where
   -- lavaSchema _ = LSAtomic LABool
-  -- lavaRead (_, x) = A.fromJSON x
+  lavaRead (_, x) = do
+    (l ::  [A.Value]) <- A.fromJSON (x :: A.Value)  
+    mapM (\y -> lavaRead ("", y)) l
+
   lavaWrite x = ("", A.toJSON ((snd . lavaWrite) <$> x) )
                 
+-- ta funckja gwarantuje, że lista kluczy w mapie obiektu będzie zawsze taka sama bo przerzcuca zmienną część wartości klucza dla wariantu do wartości.
+valueObjectHelper :: HM.HashMap T.Text a -> HM.HashMap T.Text (T.Text, a)
+valueObjectHelper =
+   HM.fromList .
+   (fmap (\(k  , v) ->
+       let [k' , vk] = T.splitOn (T.pack "_") k
+       in (k', (T.pack "_" <> vk,v)) ))
+   . HM.toList
+
+
 
 -- ____________EXAMPLES_______________
 -- ###################################
